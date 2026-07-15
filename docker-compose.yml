@@ -1,0 +1,20 @@
+services:
+  postgres:
+    image: pgvector/pgvector:pg17
+    environment:
+      POSTGRES_DB: estatepilot
+      POSTGRES_USER: estatepilot
+      POSTGRES_PASSWORD: estatepilot
+    ports:
+      - "5432:5432"
+    volumes:
+      - estatepilot_data:/var/lib/postgresql/data
+      - ./apps/api/database/migrations:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U estatepilot -d estatepilot"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  estatepilot_data:

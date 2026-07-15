@@ -1,0 +1,20 @@
+{
+  "name": "estatepilot-ai",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": ["apps/*", "packages/*"],
+  "scripts": {
+    "dev": "concurrently -n web,api -c cyan,green \"npm run dev -w @estatepilot/web\" \"npm run dev -w @estatepilot/api\"",
+    "dev:web": "npm run dev -w @estatepilot/web",
+    "dev:api": "npm run dev -w @estatepilot/api",
+    "build": "npm run build -w @estatepilot/shared && npm run build -w @estatepilot/api && npm run build -w @estatepilot/web",
+    "lint": "npm run lint -w @estatepilot/api && npm run lint -w @estatepilot/web",
+    "test": "npm run test -w @estatepilot/api && npm run test -w @estatepilot/web",
+    "db:migrate": "npm run db:migrate -w @estatepilot/api",
+    "db:seed": "npm run db:seed -w @estatepilot/api"
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.1"
+  },
+  "engines": { "node": ">=22.13.0" }
+}

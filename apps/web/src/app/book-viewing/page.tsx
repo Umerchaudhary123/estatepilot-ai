@@ -1,0 +1,8 @@
+import { properties } from '@estatepilot/shared'
+import { CalendarCheck, MapPin, ShieldCheck } from 'lucide-react'
+import Image from 'next/image'
+import { BookingForm } from '@/components/booking-form'
+import { PublicShell } from '@/components/public-shell'
+import { Card } from '@/components/ui'
+
+export default async function BookingPage({searchParams}:{searchParams:Promise<{property?:string}>}){const {property:id}=await searchParams;const property=properties.find((p)=>p.id===id)??properties[0];return <PublicShell><section className="page-hero"><div className="container"><div className="eyebrow">Schedule with confidence</div><h1 className="heading" style={{marginTop:10}}>Book a property viewing</h1><p className="subheading">Choose a suitable time. The assigned agent will confirm availability before your visit.</p></div></section><section className="section" style={{paddingTop:30}}><div className="container detail-grid"><BookingForm property={property}/><aside><Card style={{padding:18}}><Image src={property.image} alt={property.title} width={500} height={320} style={{width:'100%',height:220,objectFit:'cover',borderRadius:13}}/><h3>{property.title}</h3><div className="property-location"><MapPin size={13}/>{property.area}, {property.city}</div><div className="property-price" style={{marginTop:10}}>{property.priceLabel}</div><div style={{borderTop:'1px solid var(--border)',marginTop:18,paddingTop:18,display:'grid',gap:13,fontSize:13}}><span style={{display:'flex',gap:9}}><CalendarCheck size={17} color="var(--primary)"/>Reschedule or cancel anytime</span><span style={{display:'flex',gap:9}}><ShieldCheck size={17} color="var(--primary)"/>Verified agent and property</span></div></Card></aside></div></section></PublicShell>}
