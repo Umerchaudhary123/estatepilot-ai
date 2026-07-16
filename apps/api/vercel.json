@@ -1,4 +1,4 @@
 {
   "framework": "nestjs",
-  "buildCommand": "cd ../.. && npm run db:migrate -w @estatepilot/api && npm run db:seed -w @estatepilot/api && npm run build -w @estatepilot/shared && npm run build -w @estatepilot/api"
+  "buildCommand": "cd ../.. && npm run build -w @estatepilot/shared && npm run build -w @estatepilot/api"
 }
