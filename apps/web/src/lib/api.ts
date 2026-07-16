@@ -1,6 +1,6 @@
 import { appointments, leads, properties, type Appointment, type Lead, type Property } from '@estatepilot/shared'
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:4000/api'
+const API_URL = process.env.NEXT_PUBLIC_API_URL ?? (process.env.NODE_ENV==='production' ? 'https://estatepilot-ai-api.vercel.app/api' : 'http://localhost:4000/api')
 
 async function request<T>(path: string, fallback: T, init?: RequestInit): Promise<T> {
   try {

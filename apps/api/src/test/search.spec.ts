@@ -4,3 +4,4 @@ import { deterministicIntent } from '../services/estate.service.js'
 
 test('extracts Pakistan rental intent without an AI key',()=>{assert.deepEqual(deterministicIntent('Islamabad mein furnished 2 bedroom apartment monthly rent'),{city:'islamabad',purpose:'rent',bedrooms:2,furnished:true})})
 test('extracts Lahore buy intent',()=>{assert.deepEqual(deterministicIntent('buy 5 bedroom house Lahore'),{city:'lahore',purpose:'buy',bedrooms:5,furnished:undefined})})
+test('extracts Roman Urdu area requirements',()=>{assert.deepEqual(deterministicIntent('mujhe Lahore Bahria Town mein buy ke liye 5 bed room ghar chahiye'),{city:'lahore',purpose:'buy',bedrooms:5,furnished:undefined})})
