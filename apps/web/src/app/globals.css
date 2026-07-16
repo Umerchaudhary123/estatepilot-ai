@@ -94,7 +94,7 @@ img { max-width: 100%; }
 .match-ring::after { content: ''; position: absolute; inset: 5px; background: white; border-radius: 50%; }
 .match-ring span { position: relative; z-index: 1; }
 
-.search-panel { margin-top: -82px; position: relative; z-index: 5; }
+.search-panel { margin-top: -60px; position: relative; z-index: 5; }
 .search-card { padding: 12px; display: grid; grid-template-columns: 1fr auto; gap: 10px; border-radius: 18px; box-shadow: 0 24px 65px rgba(20,50,35,.15); }
 .search-input-wrap { display: flex; align-items: center; gap: 12px; padding: 0 10px; min-width: 0; }
 .search-input-wrap input { border: 0; outline: 0; width: 100%; min-width: 0; height: 54px; background: transparent; font-size: 16px; }
@@ -283,7 +283,7 @@ img { max-width: 100%; }
   .display { font-size: clamp(34px,10vw,42px); }
   .hero-grid { padding-block: 26px 42px; }
   .hero-visual { min-height: 280px; }
-  .search-panel { margin-top: -56px; }
+  .search-panel { margin-top: -42px; }
   .hero-image { inset: 0 0 16px 12px; width: calc(100% - 12px); border-radius: 20px 20px 64px 20px; }
   .floating-card.top { top: 20px; width: 155px; }
   .floating-card.bottom { left: 0; width: 210px; }
