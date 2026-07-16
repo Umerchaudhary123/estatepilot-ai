@@ -5,9 +5,9 @@ EstatePilot AI is a bilingual, multi-tenant real-estate SaaS platform for Pakist
 ## Stack
 
 - `apps/web`: Next.js 16, React 19, TypeScript, Tailwind CSS and owned shadcn-style components; deploys to Vercel.
-- `apps/api`: NestJS with Fastify, Zod validation and OpenRouter; deploys to Railway.
+- `apps/api`: NestJS with Fastify, Zod validation and OpenRouter; deploys to Vercel (Railway-compatible config remains available).
 - `packages/shared`: shared contracts and deterministic portfolio seed data.
-- PostgreSQL with pgvector, tenant-scoped tables and RLS policies; Supabase is the recommended managed provider.
+- Neon PostgreSQL with pgvector, tenant-scoped tables and RLS policies. EstatePilot uses an isolated `estatepilot` schema so an existing Neon project remains safe.
 
 ## Run locally
 
@@ -24,7 +24,7 @@ npm run dev
 
 Open `http://localhost:3000`. The API health endpoint is `http://localhost:4000/api/health`.
 
-Without Docker or cloud keys, the API automatically uses the same seeded demo dataset and the pre-filled demo sign-in remains functional. Add Supabase and OpenRouter environment values to activate managed authentication, persistence and free-model AI responses.
+Without Docker or cloud keys, the API automatically uses the same 50-property seeded demo dataset and the pre-filled signed demo login remains functional. Add Neon `DATABASE_URL` and an OpenRouter API key to activate persistence and free-model AI responses.
 
 ## Demo sign-in
 
@@ -48,13 +48,13 @@ npm run db:seed
 
 Create a Vercel project from this repository and set the root directory to `apps/web`. Add the `NEXT_PUBLIC_*` environment values from `.env.example`.
 
-### Railway
+### API on Vercel
 
-Create a Railway service from the same repository with root directory `apps/api`. Railway reads `railway.json`. Add `DATABASE_URL`, `WEB_URL`, `OPENROUTER_API_KEY`, `OPENROUTER_MODEL`, and Supabase service credentials.
+Create a second Vercel project from the same repository with root directory `apps/api`. Add `DATABASE_URL`, `WEB_URL`, `OPENROUTER_API_KEY`, and `OPENROUTER_MODEL`; then set `NEXT_PUBLIC_API_URL` on the web project to the deployed `/api` URL.
 
-### Supabase
+### Neon
 
-Run `apps/api/database/migrations/001_schema.sql`, then `002_seed.sql` in the SQL editor or through the API migration command. Never expose the service role key to the browser.
+Set `DATABASE_URL` to the pooled Neon connection string, then run `npm run db:migrate` and `npm run db:seed`. The commands create and use only the `estatepilot` schema. Never commit the connection string or expose it to the browser.
 
 ## Safety
 
