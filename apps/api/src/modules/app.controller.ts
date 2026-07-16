@@ -1,4 +1,4 @@
-import { BadRequestException, Body, Controller, Get, Inject, Param, Patch, Post } from '@nestjs/common'
+import { BadRequestException, Body, Controller, Get, Inject, Param, Patch, Post, UnauthorizedException } from '@nestjs/common'
 import { appointmentSchema, appointmentUpdateSchema, chatSchema, leadSchema, propertySchema, propertyStatusSchema, searchSchema, stageSchema } from '../schemas.js'
 import { DatabaseService } from '../services/database.service.js'
 import { EstateService } from '../services/estate.service.js'
@@ -6,6 +6,7 @@ import { EstateService } from '../services/estate.service.js'
 @Controller()
 export class AppController {constructor(@Inject(DatabaseService) private db:DatabaseService,@Inject(EstateService) private estate:EstateService){}
   @Get('health') health(){return{status:'ok',service:'estatepilot-api',database:this.db.isConnected()?'postgres':'seeded-demo',timestamp:new Date().toISOString()}}
+  @Post('auth/login') async login(@Body()body:unknown){const input=body as {email?:unknown;password?:unknown}|null;if(!input||typeof input.email!=='string'||typeof input.password!=='string'||!input.email.trim()||input.password.length<1)throw new BadRequestException({error:'Email and password are required.'});const user=await this.db.authenticateUser(input.email,input.password);if(!user)throw new UnauthorizedException({error:'Email or password is incorrect.'});return{user}}
   @Get('properties') properties(){return this.db.getProperties()}
   @Get('properties/:id') property(@Param('id')id:string){return this.db.getProperty(id)}
   @Post('properties') async createProperty(@Body()body:unknown){const parsed=propertySchema.safeParse(body);if(!parsed.success)throw new BadRequestException(parsed.error.flatten());return this.db.createProperty(parsed.data)}

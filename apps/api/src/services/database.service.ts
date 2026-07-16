@@ -4,6 +4,8 @@ import pg from 'pg'
 import { randomUUID } from 'node:crypto'
 
 type NewProperty=Omit<Property,'id'|'slug'|'matchScore'|'images'|'agent'> & {agentId?:string}
+export type WorkspaceRole='manager'|'agent'|'support'
+export type WorkspaceUser={id:string;email:string;name:string;role:WorkspaceRole}
 
 @Injectable()
 export class DatabaseService implements OnModuleInit, OnModuleDestroy {
@@ -13,10 +15,26 @@ export class DatabaseService implements OnModuleInit, OnModuleDestroy {
     if(!process.env.DATABASE_URL)return
     this.pool=new pg.Pool({connectionString:process.env.DATABASE_URL,ssl:{rejectUnauthorized:false},max:5})
     this.pool.on('connect',(client)=>{void client.query('set search_path to estatepilot, public')})
-    try{await this.pool.query('select 1');await this.ensureDemoSeed()}catch(error){console.warn('Postgres unavailable; using seeded memory repository',error);await this.pool.end();this.pool=null}
+    try{await this.pool.query('select 1');await this.ensureAuthSchema();await this.ensureDemoSeed()}catch(error){console.warn('Postgres unavailable; using seeded memory repository',error);await this.pool.end();this.pool=null}
   }
   async onModuleDestroy(){await this.pool?.end()}
   isConnected(){return Boolean(this.pool)}
+  private async ensureAuthSchema(){
+    if(!this.pool)return
+    await this.pool.query(`alter table users add column if not exists password_hash text; alter table users add column if not exists password_updated_at timestamptz; alter table organization_members drop constraint if exists organization_members_role_check; alter table organization_members add constraint organization_members_role_check check(role in ('platform_admin','manager','agent','support','viewer')); create index if not exists organization_members_access_idx on organization_members(organization_id,user_id,status)`)
+    await this.pool.query(`insert into organizations(id,name,slug) values('org-demo','EstatePilot Demo Realty','estatepilot-demo') on conflict(id) do nothing`)
+    const staff:[string,string,WorkspaceRole,string][]=[['manager@demo.estatepilot.pk','Areeba Khan','manager','EstatePilot2026!'],['agent@demo.estatepilot.pk','Hamza Siddiqui','agent','AgentPilot2026!'],['support@demo.estatepilot.pk','Sara Ahmed','support','SupportPilot2026!']]
+    for(const [email,name,role,password] of staff){
+      const {rows:[user]}=await this.pool.query<{id:string}>(`insert into users(email,full_name,password_hash,password_updated_at) values($1,$2,crypt($3,gen_salt('bf',12)),now()) on conflict(email) do update set full_name=excluded.full_name,password_hash=coalesce(users.password_hash,excluded.password_hash),password_updated_at=coalesce(users.password_updated_at,excluded.password_updated_at) returning id`,[email,name,password])
+      await this.pool.query(`insert into organization_members(organization_id,user_id,role,status) values('org-demo',$1,$2,'active') on conflict(organization_id,user_id) do update set role=excluded.role,status='active'`,[user.id,role])
+    }
+  }
+  async authenticateUser(email:string,password:string):Promise<WorkspaceUser|null>{
+    if(!this.pool)return null
+    const {rows}=await this.pool.query<WorkspaceUser>(`select u.id,u.email,u.full_name as name,om.role from users u join organization_members om on om.user_id=u.id where lower(u.email)=lower($1) and om.organization_id='org-demo' and om.status='active' and u.password_hash is not null and u.password_hash=crypt($2,u.password_hash) limit 1`,[email.trim(),password])
+    const user=rows[0]
+    return user&&['manager','agent','support'].includes(user.role)?user:null
+  }
   private async ensureDemoSeed(){
     if(!this.pool)return
     const {rows:[{count}]}=await this.pool.query<{count:string}>('select count(*) from properties')
