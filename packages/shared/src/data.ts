@@ -2,7 +2,7 @@ import type { Appointment, Lead, Property } from './types.js'
 
 const img = (id: string) => `https://images.unsplash.com/${id}?auto=format&fit=crop&w=1400&q=85`
 
-export const properties: Property[] = [
+const featuredProperties: Property[] = [
   {
     id: 'prop-001', slug: 'serene-villa-dha-phase-6-lahore', title: 'Serene Designer Villa', purpose: 'buy', type: 'house', city: 'Lahore', area: 'DHA Phase 6', address: 'CCA Block, DHA Phase 6, Lahore', price: 68500000, currency: 'PKR', priceLabel: 'PKR 6.85 Crore', bedrooms: 5, bathrooms: 6, size: 1, sizeUnit: 'Kanal', furnished: true, verified: true, featured: true, status: 'available', matchScore: 96, description: 'A light-filled designer residence with double-height living, landscaped courtyard and smart-home details in one of Lahore’s most connected communities.', amenities: ['Smart home', 'Solar power', 'Home theatre', '2-car parking', 'Servant quarter', 'Lawn'], image: img('photo-1600585154340-be6161a56a0c'), images: [img('photo-1600585154340-be6161a56a0c'), img('photo-1600566753190-17f0baa2a6c3'), img('photo-1600607687939-ce8a6c25118c')], latitude: 31.4697, longitude: 74.4525, agent: { name: 'Areeba Khan', title: 'Senior Property Advisor', phone: '+92 300 555 0192', avatar: 'AK' }
   },
@@ -23,6 +23,22 @@ export const properties: Property[] = [
   }
 ]
 
+const locations = [
+  ['Lahore','DHA Phase 8',31.4821,74.4211],['Lahore','Bahria Town',31.3656,74.1833],['Lahore','Model Town',31.4834,74.3239],
+  ['Islamabad','F-10',33.6957,73.0126],['Islamabad','G-11',33.6677,72.9994],['Islamabad','Bahria Enclave',33.7007,73.2448],
+  ['Karachi','DHA Phase 6',24.8042,67.0716],['Karachi','Gulshan-e-Iqbal',24.9180,67.0971],['Karachi','Scheme 33',24.9536,67.1443],
+  ['Rawalpindi','Bahria Town Phase 7',33.5428,73.1239],['Faisalabad','Canal Road',31.4181,73.1207],
+] as const
+const titles = ['Garden Residence','Executive Heights','Park View House','City Centre Apartment','Contemporary Villa','Family Courtyard Home','Signature Corner Plot','Business Avenue Office']
+const photoIds = ['photo-1600047509807-ba8f99d2cdde','photo-1522708323590-d24dbb6b0267','photo-1600585154340-be6161a56a0c','photo-1502672260266-1c1ef2d93688','photo-1600566753190-17f0baa2a6c3','photo-1600210492486-724fe5c67fb0']
+const generatedProperties: Property[] = Array.from({length:44},(_,index)=>{
+  const number=index+7; const [city,area,latitude,longitude]=locations[index%locations.length]; const purpose=index%2?'rent':'buy'; const type=(['house','apartment','plot','commercial'] as const)[index%4]
+  const bedrooms=type==='plot'||type==='commercial'?0:2+(index%5); const price=purpose==='rent'?85000+(index%8)*45000:14500000+(index%10)*8500000; const title=`${titles[index%titles.length]} ${number}`; const image=img(photoIds[index%photoIds.length])
+  return {id:`prop-${String(number).padStart(3,'0')}`,slug:`${title.toLowerCase().replace(/[^a-z0-9]+/g,'-')}-${area.toLowerCase().replace(/[^a-z0-9]+/g,'-')}`,title,purpose,type,city,area,address:`Plot ${20+index}, ${area}, ${city}`,price,currency:'PKR',priceLabel:purpose==='rent'?`PKR ${(price/100000).toFixed(2)} Lakh / month`:`PKR ${(price/10000000).toFixed(2)} Crore`,bedrooms,bathrooms:bedrooms?bedrooms+1:1,size:type==='plot'?5+(index%4)*5:type==='house'?10+(index%4)*5:900+(index%7)*250,sizeUnit:type==='plot'||type==='house'?'Marla':'Sq. Ft.',furnished:type==='apartment'&&index%3!==0,verified:index%7!==0,featured:index%9===0,status:index%13===0?'reserved':'available',matchScore:72+(index%25),description:`A verified ${type} in ${area}, ${city}, selected for its practical location, transparent pricing and strong buyer or tenant value.`,amenities:['Secure community','Backup power','Parking',index%2?'Near schools':'Near commercial area'],image,images:[image,img(photoIds[(index+1)%photoIds.length]),img(photoIds[(index+2)%photoIds.length])],latitude:latitude+(index%5)*.001,longitude:longitude+(index%5)*.001,agent:index%3===0?{name:'Areeba Khan',title:'Senior Property Advisor',phone:'+92 300 555 0192',avatar:'AK'}:index%3===1?{name:'Hamza Siddiqui',title:'Islamabad Area Specialist',phone:'+92 321 555 0144',avatar:'HS'}:{name:'Sara Ahmed',title:'Karachi Residential Lead',phone:'+92 333 555 0188',avatar:'SA'}}
+})
+
+export const properties: Property[] = [...featuredProperties,...generatedProperties]
+
 export const leads: Lead[] = [
   { id: 'lead-001', name: 'Usman Tariq', email: 'usman@example.com', phone: '+92 301 234 5678', purpose: 'buy', budget: 'PKR 6–8 Crore', area: 'DHA Lahore', score: 88, temperature: 'hot', stage: 'viewing', assignedAgent: 'Areeba Khan', lastActivity: '8 min ago', source: 'AI assistant' },
   { id: 'lead-002', name: 'Maham Ali', email: 'maham@example.com', phone: '+92 333 888 9021', purpose: 'rent', budget: 'PKR 1.5 Lakh/mo', area: 'Blue Area', score: 76, temperature: 'hot', stage: 'qualified', assignedAgent: 'Hamza Siddiqui', lastActivity: '24 min ago', source: 'Website' },
@@ -31,8 +47,13 @@ export const leads: Lead[] = [
   { id: 'lead-005', name: 'Zain Sheikh', email: 'zain@example.com', phone: '+92 345 110 2233', purpose: 'buy', budget: 'Not confirmed', area: 'Islamabad', score: 34, temperature: 'cold', stage: 'new', assignedAgent: 'Hamza Siddiqui', lastActivity: 'Yesterday', source: 'Website' }
 ]
 
+const extraNames=['Hira Iqbal','Ahmed Khan','Maryam Faisal','Omer Shah','Sana Malik','Daniyal Akram','Fatima Saeed','Hassan Mir','Iqra Anwar','Saad Qureshi','Komal Aslam','Taha Javed','Mehwish Rauf','Farhan Abbas','Rabia Tariq']
+leads.push(...extraNames.map((name,index)=>({id:`lead-${String(index+6).padStart(3,'0')}`,name,email:`${name.toLowerCase().replace(' ','.')}@example.com`,phone:`+92 3${String(10+index).padStart(2,'0')} 555 ${String(1100+index)}`,purpose:index%2?'rent' as const:'buy' as const,budget:index%2?'PKR 1–3 Lakh/mo':'PKR 2–8 Crore',area:String(locations[index%locations.length][1]),score:42+(index*7)%55,temperature:index%3===0?'hot' as const:index%3===1?'warm' as const:'cold' as const,stage:(['new','qualified','viewing','negotiation','won'] as const)[index%5],assignedAgent:['Areeba Khan','Hamza Siddiqui','Sara Ahmed'][index%3],lastActivity:index<3?'Today':`${index} days ago`,source:['Website','AI assistant','Referral'][index%3]})))
+
 export const appointments: Appointment[] = [
   { id: 'apt-001', leadName: 'Usman Tariq', propertyTitle: 'Serene Designer Villa', agentName: 'Areeba Khan', date: '2026-07-16', time: '11:30 AM', type: 'physical', status: 'confirmed' },
   { id: 'apt-002', leadName: 'Maham Ali', propertyTitle: 'Skyline Furnished Apartment', agentName: 'Hamza Siddiqui', date: '2026-07-16', time: '3:00 PM', type: 'virtual', status: 'confirmed' },
   { id: 'apt-003', leadName: 'Ayesha Noor', propertyTitle: 'Gulberg Urban Loft', agentName: 'Areeba Khan', date: '2026-07-17', time: '5:30 PM', type: 'physical', status: 'pending' }
 ]
+
+appointments.push(...Array.from({length:9},(_,index)=>({id:`apt-${String(index+4).padStart(3,'0')}`,leadName:leads[index+5].name,propertyTitle:properties[index+6].title,agentName:properties[index+6].agent.name,date:`2026-07-${String(18+index).padStart(2,'0')}`,time:['10:00 AM','12:30 PM','3:00 PM','5:30 PM'][index%4],type:index%3===0?'virtual' as const:'physical' as const,status:index%4===0?'pending' as const:'confirmed' as const})))

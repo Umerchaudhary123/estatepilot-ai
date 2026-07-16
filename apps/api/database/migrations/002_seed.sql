@@ -1,3 +1,6 @@
+create schema if not exists estatepilot;
+set search_path to estatepilot, public;
+
 insert into organizations(id,name,slug) values('org-demo','EstatePilot Demo Realty','estatepilot-demo') on conflict do nothing;
 
 insert into agents(id,organization_id,name,title,phone,territories) values

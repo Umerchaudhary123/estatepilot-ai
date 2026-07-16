@@ -1,3 +1,6 @@
+create schema if not exists estatepilot;
+set search_path to estatepilot, public;
+
 create extension if not exists pgcrypto;
 create extension if not exists vector;
 
