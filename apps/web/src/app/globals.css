@@ -132,7 +132,12 @@ img { max-width: 100%; }
 .filters { display: grid; grid-template-columns: 2fr repeat(4,1fr); gap: 10px; margin: 25px 0; }
 .results-layout { display: grid; grid-template-columns: 1fr 360px; gap: 24px; align-items: start; }
 .map-panel { position: sticky; top: 100px; height: 680px; overflow: hidden; background: #dde7db; }
+.map-shell { position: relative; width: 100%; height: 100%; }
 .free-property-map { width: 100%; height: 100%; min-height: 440px; z-index: 1; }
+.map-help { position: absolute; z-index: 600; left: 12px; bottom: 12px; max-width: 220px; padding: 9px 11px; border: 1px solid rgba(20,55,42,.12); border-radius: 10px; background: rgba(255,255,255,.94); box-shadow: 0 4px 14px rgba(19,50,39,.12); color: #254238; font-size: 11px; line-height: 1.35; pointer-events: none; }
+.listing-popup { display: grid; gap: 5px; min-width: 190px; padding: 2px; color: #19372d; font-size: 12px; line-height: 1.35; }
+.listing-popup span { color: #607369; }
+.listing-popup a { display: inline-flex; width: fit-content; margin-top: 3px; padding: 7px 9px; border-radius: 7px; background: #0d6246; color: white; font-weight: 750; text-decoration: none; }
 
 .detail-grid { display: grid; grid-template-columns: minmax(0,1.45fr) minmax(320px,.55fr); gap: 30px; }
 .gallery { display: grid; grid-template-columns: 2fr 1fr; gap: 10px; height: 520px; }
