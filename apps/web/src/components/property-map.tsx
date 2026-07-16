@@ -14,22 +14,21 @@ export function PropertyMap({ properties }: { properties: Property[] }) {
     async function renderMap() {
       const L = (await import('leaflet')).default
       if (disposed || !element.current) return
-      const points = properties.filter((property) => Number.isFinite(property.latitude) && Number.isFinite(property.longitude))
-      const center: [number, number] = points.length
-        ? [points.reduce((sum, property) => sum + property.latitude, 0) / points.length, points.reduce((sum, property) => sum + property.longitude, 0) / points.length]
-        : [30.3753, 69.3451]
-      const instance = L.map(element.current, { scrollWheelZoom: false, zoomControl: false }).setView(center, points.length > 1 ? 6 : 11)
+      const points = properties.map((property) => ({ property, location: [Number(property.latitude), Number(property.longitude)] as [number, number] })).filter(({ location }) => Number.isFinite(location[0]) && Number.isFinite(location[1]))
+      const instance = L.map(element.current, { scrollWheelZoom: false, zoomControl: false }).setView([30.3753, 69.3451], 5)
       map = instance
       L.control.zoom({ position: 'bottomright' }).addTo(instance)
       L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19, attribution: '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer">OpenStreetMap contributors</a>' }).addTo(instance)
-      const bounds: [number, number][] = []
-      points.forEach((property, index) => {
-        const location: [number, number] = [property.latitude, property.longitude]
-        bounds.push(location)
-        const icon = L.divIcon({ className: 'listing-marker', html: `<span>${index + 1}</span>`, iconSize: [32, 32], iconAnchor: [16, 16] })
-        L.marker(location, { icon }).addTo(instance).bindPopup(`<strong>${property.title}</strong><br/>${property.area}, ${property.city}<br/><b>${property.priceLabel}</b>`)
+      points.forEach(({ property, location }) => {
+        L.circleMarker(location, { radius: 9, color: '#ffffff', weight: 3, fillColor: '#0d6246', fillOpacity: 1 }).addTo(instance).bindPopup(`<strong>${property.title}</strong><br/>${property.area}, ${property.city}<br/><b>${property.priceLabel}</b>`)
       })
-      if (bounds.length > 1) instance.fitBounds(bounds, { padding: [32, 32], maxZoom: 11 })
+      const fitListings = () => {
+        instance.invalidateSize()
+        if (points.length > 1) instance.fitBounds(points.map(({ location }) => location), { padding: [36, 36], maxZoom: 11 })
+        if (points.length === 1) instance.setView(points[0].location, 13)
+      }
+      instance.whenReady(() => requestAnimationFrame(fitListings))
+      window.setTimeout(fitListings, 180)
     }
 
     void renderMap()
