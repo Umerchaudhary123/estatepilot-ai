@@ -98,7 +98,9 @@ img { max-width: 100%; }
 .search-card { padding: 12px; display: grid; grid-template-columns: 1fr auto; gap: 10px; border-radius: 18px; box-shadow: 0 24px 65px rgba(20,50,35,.15); }
 .search-input-wrap { display: flex; align-items: center; gap: 12px; padding: 0 10px; min-width: 0; }
 .search-input-wrap input { border: 0; outline: 0; width: 100%; min-width: 0; height: 54px; background: transparent; font-size: 16px; }
-.quick-searches { margin-top: 13px; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; font-size: 12px; color: var(--muted); }
+.quick-searches { margin-top: 13px; display: flex; gap: 8px; align-items: flex-start; font-size: 12px; color: var(--muted); }
+.quick-searches > span { padding: 7px 0; flex: 0 0 auto; }
+.quick-search-options { display: flex; flex: 1; flex-wrap: wrap; gap: 8px; min-width: 0; }
 .quick-searches button { border: 1px solid var(--border); background: rgba(255,255,255,.76); border-radius: 999px; padding: 7px 10px; cursor: pointer; color: var(--foreground); }
 
 .section-head { display: flex; justify-content: space-between; align-items: end; gap: 24px; margin-bottom: 24px; }
@@ -131,7 +133,10 @@ img { max-width: 100%; }
 .page-hero { padding: 72px 0 50px; background: radial-gradient(circle at 90% 0, rgba(214,239,118,.35), transparent 30%); }
 .filters { display: grid; grid-template-columns: 2fr repeat(4,1fr); gap: 10px; margin: 25px 0; }
 .results-layout { display: grid; grid-template-columns: 1fr 360px; gap: 24px; align-items: start; }
+.explorer-property-grid.with-map { grid-template-columns: repeat(2,minmax(0,1fr)); }
 .map-panel { position: sticky; top: 100px; height: 680px; overflow: hidden; background: #dde7db; }
+.detail-map-panel { position: relative; top: 0; height: 320px; }
+.detail-map-panel .free-property-map { min-height: 320px; }
 .map-shell { position: relative; width: 100%; height: 100%; }
 .free-property-map { width: 100%; height: 100%; min-height: 440px; z-index: 1; }
 .map-help { position: absolute; z-index: 600; left: 12px; bottom: 12px; max-width: 220px; padding: 9px 11px; border: 1px solid rgba(20,55,42,.12); border-radius: 10px; background: rgba(255,255,255,.94); box-shadow: 0 4px 14px rgba(19,50,39,.12); color: #254238; font-size: 11px; line-height: 1.35; pointer-events: none; }
@@ -237,6 +242,7 @@ img { max-width: 100%; }
   .metric-grid { grid-template-columns: repeat(2,minmax(0,1fr)); }
   .results-layout { grid-template-columns: 1fr; }
   .map-panel { position: relative; top: 0; height: 440px; }
+  .detail-map-panel { height: 320px; }
   .filters { grid-template-columns: repeat(3,1fr); }
   .detail-grid { grid-template-columns: 1fr; }
   .detail-sidebar { position: static; }
@@ -259,6 +265,10 @@ img { max-width: 100%; }
   .stat:nth-child(2) { border-right: 0; }
   .stat:nth-child(-n+2) { border-bottom: 1px solid var(--border); }
   .filters { grid-template-columns: repeat(2,1fr); }
+  .property-grid, .explorer-property-grid.with-map { grid-template-columns: 1fr; }
+  .public-main { padding-bottom: 76px; }
+  .chat-launcher { right: 14px; bottom: max(14px, env(safe-area-inset-bottom)); width: 52px; height: 52px; border-radius: 16px 16px 16px 5px; }
+  .chat-window { right: 14px; bottom: calc(max(14px, env(safe-area-inset-bottom)) + 64px); }
   .gallery { height: auto; grid-template-columns: 1fr; }
   .gallery > img { aspect-ratio: 1.45; }
   .gallery-side { grid-template-columns: 1fr 1fr; grid-template-rows: auto; }
@@ -295,7 +305,6 @@ img { max-width: 100%; }
   .search-card { grid-template-columns: 1fr; }
   .search-card .button { width: 100%; }
   .section-head { align-items: start; flex-direction: column; }
-  .property-grid { grid-template-columns: 1fr; }
   .feature-list { grid-template-columns: 1fr; }
   .filters { grid-template-columns: 1fr; }
   .stats-strip { grid-template-columns: 1fr; }
@@ -311,8 +320,6 @@ img { max-width: 100%; }
   .panel { padding: 15px; }
   .footer-grid { grid-template-columns: 1fr; gap: 28px; }
   .footer-bottom { flex-direction: column; }
-  .chat-launcher { right: 14px; bottom: 14px; }
-  .chat-window { right: 14px; bottom: 82px; }
   .auth-panel { padding: 18px; }
 }
 
